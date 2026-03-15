@@ -12,6 +12,9 @@ struct wallpaperApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onAppear {
+                    WallPaperViewController.shared.createWallPaper()
+                }
         }
     }
 }
