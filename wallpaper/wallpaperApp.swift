@@ -13,7 +13,8 @@ struct wallpaperApp: App {
         WindowGroup {
             ContentView()
                 .onAppear {
-                    WallPaperViewController.shared.createWallPaper()
+                    //on appear matra garney because some weird bug happens if you do it in init
+//                    WallPaperViewController.shared.createWallPaper()
                 }
         }
     }
