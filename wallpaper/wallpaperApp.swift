@@ -14,7 +14,7 @@ struct wallpaperApp: App {
             ContentView()
                 .onAppear {
                     //on appear matra garney because some weird bug happens if you do it in init
-//                    WallPaperViewController.shared.createWallPaper()
+                    UserDefaultsManager.shared.retrieveUserDefault()
                 }
         }
     }

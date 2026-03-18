@@ -18,14 +18,13 @@ struct ContentView: View {
                 showFileImporter = true
             }.fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.movie]) { result in
                 switch result {
-                case .success(let urls):
-                    let canAccess = urls.startAccessingSecurityScopedResource()
-                    if canAccess {
-                        WallPaperViewController.shared.createWallPaper(url: urls)
+                case .success(let url):
+                    guard url.startAccessingSecurityScopedResource() else { return }
+                    defer {
+                        url.stopAccessingSecurityScopedResource()
                     }
-                    else {
-                        print("Failed in Accessing Video")
-                    }
+                        UserDefaultsManager.shared.saveURL(url:url)
+                        WallPaperViewController.shared.createWallPaper(url: url)
                 case .failure:
                     print("Failed fetching video")
                 }
