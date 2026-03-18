@@ -12,6 +12,7 @@ struct ContentView: View {
     @State var showFileImporter = false
     var body: some View {
         VStack {
+            Text("Import the video here 👇")
             Button("Import file") {
                 print("Debug")
                 showFileImporter = true

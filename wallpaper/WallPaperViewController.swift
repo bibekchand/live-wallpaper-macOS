@@ -10,6 +10,7 @@ import Cocoa
 class WallPaperViewController {
     static let shared = WallPaperViewController()
     private var looper: AVPlayerLooper?
+    private var currentWindow: NSWindow?
     private var player: AVQueuePlayer?
     private init() {}
     private func animateReveal(fromCenter center: CGPoint, in view: NSView) {
@@ -39,21 +40,26 @@ class WallPaperViewController {
         }
     }
     func createWallPaper(url: URL) {
+        //close the previous window
+        if let oldWindow = self.currentWindow {
+            oldWindow.close()
+            self.currentWindow = nil
+        }
         //create a window object from ns window
-        let window = NSWindow(contentRect: NSScreen.main!.frame, styleMask: [.borderless], backing: .buffered, defer: false)
+        self.currentWindow = NSWindow(contentRect: NSScreen.main!.frame, styleMask: [.borderless], backing: .buffered, defer: false)
         //have the transparency to 1 show it is showing
-        window.setFrame(NSScreen.main!.frame, display: true)
-        window.level = NSWindow.Level(Int(CGWindowLevelForKey(.desktopWindow)) - 1)
-        window.alphaValue = 1
-        window.isOpaque = true
-        window.ignoresMouseEvents = true
-        window.collectionBehavior = [
+        self.currentWindow?.setFrame(NSScreen.main!.frame, display: true)
+        self.currentWindow?.level = NSWindow.Level(Int(CGWindowLevelForKey(.desktopWindow)) - 1)
+        self.currentWindow?.alphaValue = 1
+        self.currentWindow?.isOpaque = true
+        self.currentWindow?.ignoresMouseEvents = true
+        self.currentWindow?.collectionBehavior = [
             .canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle
         ]
         let contentView = NSView(frame: NSScreen.main!.frame)
         //layer to draw upon the window
         contentView.wantsLayer = true
-        window.contentView = contentView
+        self.currentWindow?.contentView = contentView
         let item = AVPlayerItem(url: url)
         item.preferredForwardBufferDuration = 0
         self.player = AVQueuePlayer()
@@ -65,7 +71,7 @@ class WallPaperViewController {
         playerLayer.videoGravity = .resizeAspectFill
         playerLayer.needsDisplayOnBoundsChange = true
         contentView.layer = playerLayer
-        window.orderFrontRegardless()
+        self.currentWindow?.orderFrontRegardless()
         contentView.layoutSubtreeIfNeeded()
         animateReveal(fromCenter: CGPoint(x: NSScreen.main!.frame.width / 2, y: NSScreen.main!.frame.height / 2), in: contentView)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
